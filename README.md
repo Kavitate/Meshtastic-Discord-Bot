@@ -16,17 +16,17 @@ It also allows the user to communicate on their local network no matter where th
 ## Screenshots
 
 <p float="left">
-  <img align="center" src="https://i.imgur.com/gOznvfX.png" width="450" height="250"/>
-  <img align="right" src="https://i.imgur.com/NiL2Ow2.png" width="450" height="250"/>
+  <img align="center" src="https://i.imgur.com/gOznvfX.png" width="350" height="175"/>
+  <img align="right" src="https://i.imgur.com/NiL2Ow2.png" width="350" height="175"/>
 </p>
 
 <p float="left">
-  <img align="center" src="https://i.imgur.com/jCrQDW9.png" width="450" height="250"/>
-  <img align="right" src="https://i.imgur.com/R8iTtPF.png" width="450" height="250"/>
+  <img align="center" src="https://i.imgur.com/jCrQDW9.png" width="350" height="175"/>
+  <img align="right" src="https://i.imgur.com/R8iTtPF.png" width="350" height="175"/>
 </p>
 
 <p float="left">
-  <img align="center" src="https://i.imgur.com/84trvDK.png" width="1050" height="400"/>
+  <img align="center" src="https://i.imgur.com/84trvDK.png" width="950" height="300"/>
 </p>
 
 ## Setup
