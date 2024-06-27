@@ -14,7 +14,20 @@ Having a Discord bot directly connected to the Meshtastic network allows users t
 It also allows the user to communicate on their local network no matter where they are in the world.
 
 ## Screenshots
-Coming soon!
+
+<p float="left">
+  <img align="center" src="https://i.imgur.com/gOznvfX.png" width="450" height="250"/>
+  <img align="right" src="https://i.imgur.com/NiL2Ow2.png" width="450" height="250"/>
+</p>
+
+<p float="left">
+  <img align="center" src="https://i.imgur.com/jCrQDW9.png" width="450" height="250"/>
+  <img align="right" src="https://i.imgur.com/R8iTtPF.png" width="450" height="250"/>
+</p>
+
+<p float="left">
+  <img align="center" src="https://i.imgur.com/84trvDK.png" width="1050" height="400"/>
+</p>
 
 ## Setup
 The following must be established in order for the bot to operate successfully:
