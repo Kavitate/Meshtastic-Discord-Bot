@@ -352,6 +352,8 @@ async def active(interaction: discord.Interaction):
     
     await asyncio.sleep(1)
 
+    await interaction.delete_original_response()
+
 def run_discord_bot():
     try:
         client.run(token)
