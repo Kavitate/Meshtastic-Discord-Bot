@@ -1,4 +1,13 @@
 {
+    "timezone": "YOUR-TIMEZONE-HERE",
     "discord_bot_token": "YOUR-TOKEN-HERE",
-    "discord_channel_id": "YOUR-CHANNEL-ID-HERE"
+    "discord_channel_id": "YOUR-CHANNEL-ID-HERE",
+    "CHANNEL0": "YOUR-CHANNEL-0",
+    "CHANNEL1": "YOUR-CHANNEL-1",
+    "CHANNEL2": "YOUR-CHANNEL-2",
+    "CHANNEL3": "YOUR-CHANNEL-3",
+    "CHANNEL4": "YOUR-CHANNEL-4",
+    "CHANNEL5": "YOUR-CHANNEL-5",
+    "CHANNEL6": "YOUR-CHANNEL-6",
+    "CHANNEL7": "YOUR-CHANNEL-7"
 }

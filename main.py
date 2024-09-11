@@ -34,16 +34,30 @@ color = 0x67ea94 # Meshtastic Green
 token = config["discord_bot_token"]
 channel_id = int(config["discord_channel_id"])
 
+# Load channel names from config
 channel_names = {
-    0: "CHANNEL0",
-    1: "CHANNEL1",
-    2: "CHANNEL2",
-    3: "CHANNEL3",
-    4: "CHANNEL4",
-    5: "CHANNEL5",
-    6: "CHANNEL6",
-    7: "CHANNEL7",
+    0: config["CHANNEL0"],
+    1: config["CHANNEL1"],
+    2: config["CHANNEL2"],
+    3: config["CHANNEL3"],
+    4: config["CHANNEL4"],
+    5: config["CHANNEL5"],
+    6: config["CHANNEL6"],
+    7: config["CHANNEL7"],
 }
+# Load timezone from config
+timeZone = config["timezone"]
+
+#channel_names = {
+#    0: "CHANNEL0",
+#    1: "CHANNEL1",
+#    2: "CHANNEL2",
+#    3: "CHANNEL3",
+#    4: "CHANNEL4",
+#    5: "CHANNEL5",
+#    6: "CHANNEL6",
+#    7: "CHANNEL7",
+#}
 
 meshtodiscord = queue.Queue()
 discordtomesh = queue.Queue()
@@ -143,7 +157,7 @@ class MeshBot(discord.Client):
                             snr = "?"
                         if "lastHeard" in nodes[node]:
                             ts = int(nodes[node]['lastHeard'])
-                            time_zone = pytz.timezone('YOUR-TZ')
+                            time_zone = pytz.timezone('timeZone')
                             current_time = datetime.fromtimestamp(ts, tz=pytz.utc).astimezone(time_zone)
                             timestr = current_time.strftime('%d %B %Y %I:%M:%S %p')
                         else:
@@ -264,7 +278,7 @@ async def sendnum(interaction: discord.Interaction, nodenum: int, message: str):
     await interaction.response.send_message(embed=embed)
     discordtomesh.put(f"nodenum={nodenum} {message}")
 
-@client.tree.command(name="CHANNEL-NAME-0", description="Send a message in CHANNEL-NAME-0.")
+@client.tree.command(name="channel-name-0", description="Send a message in CHANNEL-NAME-0.")
 async def channelname0(interaction: discord.Interaction, message: str):
 
     current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
@@ -274,7 +288,7 @@ async def channelname0(interaction: discord.Interaction, message: str):
     await interaction.response.send_message(embed=embed)
     discordtomesh.put(f"channel=0 {message}")
 
-@client.tree.command(name="CHANNEL-NAME-1", description="Send a message in CHANNEL-NAME-1.")
+@client.tree.command(name="channel-name-1", description="Send a message in CHANNEL-NAME-1.")
 async def channelname1(interaction: discord.Interaction, message: str):
 
     current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
@@ -284,7 +298,7 @@ async def channelname1(interaction: discord.Interaction, message: str):
     await interaction.response.send_message(embed=embed)
     discordtomesh.put(f"channel=1 {message}")
 
-@client.tree.command(name="CHANNEL-NAME-2", description="Send a message in CHANNEL-NAME-2.")
+@client.tree.command(name="channel-name-2", description="Send a message in CHANNEL-NAME-2.")
 async def channelname2(interaction: discord.Interaction, message: str):
 
     current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
@@ -294,7 +308,7 @@ async def channelname2(interaction: discord.Interaction, message: str):
     await interaction.response.send_message(embed=embed)
     discordtomesh.put(f"channel=2 {message}")
 
-@client.tree.command(name="CHANNEL-NAME-3", description="Send a message in CHANNEL-NAME-3.")
+@client.tree.command(name="channel-name-3", description="Send a message in CHANNEL-NAME-3.")
 async def channelname3(interaction: discord.Interaction, message: str):
 
     current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
@@ -304,7 +318,7 @@ async def channelname3(interaction: discord.Interaction, message: str):
     await interaction.response.send_message(embed=embed)
     discordtomesh.put(f"channel=3 {message}")
 
-@client.tree.command(name="CHANNEL-NAME-4", description="Send a message in CHANNEL-NAME-4.")
+@client.tree.command(name="channel-name-4", description="Send a message in CHANNEL-NAME-4.")
 async def channelname4(interaction: discord.Interaction, message: str):
 
     current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
@@ -314,7 +328,7 @@ async def channelname4(interaction: discord.Interaction, message: str):
     await interaction.response.send_message(embed=embed)
     discordtomesh.put(f"channel=4 {message}")
 
-@client.tree.command(name="CHANNEL-NAME-5", description="Send a message in CHANNEL-NAME-5.")
+@client.tree.command(name="channel-name-5", description="Send a message in CHANNEL-NAME-5.")
 async def channelname5(interaction: discord.Interaction, message: str):
 
     current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
@@ -324,7 +338,7 @@ async def channelname5(interaction: discord.Interaction, message: str):
     await interaction.response.send_message(embed=embed)
     discordtomesh.put(f"channel=5 {message}")
 
-@client.tree.command(name="CHANNEL-NAME-6", description="Send a message in CHANNEL-NAME-6.")
+@client.tree.command(name="channel-name-6", description="Send a message in CHANNEL-NAME-6.")
 async def channelname6(interaction: discord.Interaction, message: str):
 
     current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
@@ -334,10 +348,9 @@ async def channelname6(interaction: discord.Interaction, message: str):
     await interaction.response.send_message(embed=embed)
     discordtomesh.put(f"channel=6 {message}")
 
-@client.tree.command(name="CHANNEL-NAME-7", description="Send a message in CHANNEL-NAME-7.")
-async def channelname7(interaction: discord.Interaction, message: str):
-
-    current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
+    @client.tree.command(name="channel-name-7", description="Send a message in CHANNEL-NAME-7.")
+    async def channelname7(interaction: discord.Interaction, message: str):
+        current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
 
     embed = discord.Embed(title="Sending Message to CHANNEL-NAME-7:", description=message, color=0x67ea94)
     embed.set_footer(text=f"{current_time}")
