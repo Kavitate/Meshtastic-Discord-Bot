@@ -36,6 +36,7 @@ color = 0x67ea94  # Meshtastic Green
 token = config["discord_bot_token"]
 channel_id = int(config["discord_channel_id"])
 channel_names = config["channel_names"]
+time_zone = config["time_zone"]
 
 meshtodiscord = queue.Queue()
 discordtomesh = queue.Queue()
@@ -135,9 +136,9 @@ class MeshBot(discord.Client):
                             snr = "?"
                         if "lastHeard" in nodes[node]:
                             ts = int(nodes[node]['lastHeard'])
-                            central_tz = pytz.timezone('US/Central')
-                            central_time = datetime.fromtimestamp(ts, tz=pytz.utc).astimezone(central_tz)
-                            timestr = central_time.strftime('%d %B %Y %I:%M:%S %p')
+                            timezone = pytz.timezone(time_zone)
+                            local_time = datetime.fromtimestamp(ts, tz=pytz.utc).astimezone(timezone)
+                            timestr = local_time.strftime('%d %B %Y %I:%M:%S %p')
                         else:
                             # 15 minute timer for active nodes.
                             ts = time.time() - (16 * 60)
