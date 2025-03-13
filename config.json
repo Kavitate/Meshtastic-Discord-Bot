@@ -1,4 +1,14 @@
 {
-    "discord_bot_token": "YOUR-TOKEN-HERE",
-    "discord_channel_id": "YOUR-CHANNEL-ID-HERE"
+  "discord_bot_token": "YOUR_DISCORD_BOT_TOKEN",
+  "discord_channel_id": "YOUR_DISCORD_CHANNEL_ID",
+  "channel_names": {
+    "0": "YOUR_CHANNEL_0",
+    "1": "YOUR_CHANNEL_1",
+    "2": "YOUR_CHANNEL_2",
+    "3": "YOUR_CHANNEL_3",
+    "4": "YOUR_CHANNEL_4",
+    "5": "YOUR_CHANNEL_5",
+    "6": "YOUR_CHANNEL_6",
+    "7": "YOUR_CHANNEL_7"
+  }
 }
