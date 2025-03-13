@@ -4,9 +4,6 @@
   <img src="https://i.imgur.com/V9HLS0E.jpeg">
 </p>
 
-<h1 align="center">:warning: This project is still in development! :warning:</h1>
-Even though the project is still in development it can be used in its current state.
-
 ## Purpose
 This Discord bot is used to communicate directly with the [Meshtastic](https://meshtastic.org/) network using a Meshtastic compatable device.
 
@@ -37,41 +34,41 @@ The following must be established in order for the bot to operate successfully:
 
 ## Variables
 Update the following variables in the `config.json` file:
-- Replace `YOUR-TOKEN-HERE` with your Discord Bot Token.
+- Replace `YOUR_DISCORD_BOT_TOKEN` with your Discord Bot Token.
   - Instructions on how to create a Discord bot can be found [here](https://discordpy.readthedocs.io/en/stable/discord.html).
-- Replace `YOUR-CHANNEL-ID-HERE` with the channel ID from the server the bot will be communicating in.
+- Replace `YOUR_DISCORD_CHANNEL_ID` with the channel ID from the server the bot will be communicating in.
   - Instructions on how to get the channel ID can be found [here](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID).
-
-Update the following variables in the `main.py` file:
-- Line `37`: Replace `CHANNEL0` through `CHANNEL7` with your specific channel names.
-- Line `146`: Replace `YOUR-TZ` with your timezone.
+- Replace `YOUR_TIME_ZONE` with your zime zone.
   - A list of available timezones can be found [here](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568).
-- Lines `267-272`: Replace `CHANNEL-NAME-0` and `channelname0` with your specific channel name.
-- Lines `277-282`: Replace `CHANNEL-NAME-1` and `channelname1` with your specific channel name.
-- Lines `287-292`: Replace `CHANNEL-NAME-2` and `channelname2` with your specific channel name.
-- Lines `297-302`: Replace `CHANNEL-NAME-3` and `channelname3` with your specific channel name.
-- Lines `307-312`: Replace `CHANNEL-NAME-4` and `channelname4` with your specific channel name.
-- Lines `317-322`: Replace `CHANNEL-NAME-5` and `channelname5` with your specific channel name.
-- Lines `327-332`: Replace `CHANNEL-NAME-6` and `channelname6` with your specific channel name.
-- Lines `337-342`: Replace `CHANNEL-NAME-7` and `channelname7` with your specific channel name.
-
-If the above channel names have been updated, the commands listed in the help menu must also be updated starting on line `211`.
+- Replace all channel names with the channel names you've setup on your radio.
+  - All channel names must be unique!
+  - If you do not use all seven channels, that's fine. Just leave the unused ones as they are or remove its entire entry from the `config.json` file.
 
 ## Commands
 Once the above variables have been updated, run the bot using the following commands:
-(Note that if you have changed the above channel name variables, the channel commands below will change.)
+
+Note that if you have changed the above channel name variables in the `config.json` file, the channel commands below will change.
 - `/sendid` followed by the node ID to send a direct message to that node. For example, `/sendid !7c5acfa4`.
 - `/sendnum` followed by the node number to send a direct message to that node. For example, `/sendnum 2086326180`.
 - `/active` to show a list of active nodes seen in the last 15 minutes.
-- `/channelname0` to send a message in channel 0.
-- `/channelname1` to send a message in channel 1.
-- `/channelname2` to send a message in channel 2.
-- `/channelname3` to send a message in channel 3.
-- `/channelname4` to send a message in channel 4.
-- `/channelname5` to send a message in channel 5.
-- `/channelname6` to send a message in channel 6.
-- `/channelname7` to send a message in channel 7.
+- `/YOUR_CHANNEL_0` to send a message in channel 0.
+- `/YOUR_CHANNEL_1` to send a message in channel 1.
+- `/YOUR_CHANNEL_2` to send a message in channel 2.
+- `/YOUR_CHANNEL_3` to send a message in channel 3.
+- `/YOUR_CHANNEL_4` to send a message in channel 4.
+- `/YOUR_CHANNEL_5` to send a message in channel 5.
+- `/YOUR_CHANNEL_6` to send a message in channel 6.
+- `/YOUR_CHANNEL_7` to send a message in channel 7.
 - `/help` to show a list of available bot commands.
+
+## Quirks
+I've noticed that after running the bot for months on end there are times where it would stop pulling messages unti I would reboot the bot and radio.
+
+I'm not sure if this is specific to the radio itself or not.
+  - Currently my bot is running utilizing a Lilygo T-Beam Supreme.
+
+To get around this issue I have set the bot up as a service on a timer to reboot every night.
+Since I have made this change I have not noticed any messages being hung.
 
 ## Credits
 The idea for this bot was inspired by the [Meshtastic Discord Bridge](https://github.com/raudette/meshtastic_discord_bridge) created by [raudette](https://github.com/raudette).
