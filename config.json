@@ -1,6 +1,7 @@
 {
   "discord_bot_token": "YOUR_DISCORD_BOT_TOKEN",
   "discord_channel_id": "YOUR_DISCORD_CHANNEL_ID",
+  "time_zone": "YOUR_TIME_ZONE",
   "channel_names": {
     "0": "YOUR_CHANNEL_0",
     "1": "YOUR_CHANNEL_1",
