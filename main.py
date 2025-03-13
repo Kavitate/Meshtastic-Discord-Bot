@@ -6,17 +6,19 @@ import sys
 import time
 from datetime import datetime
 import discord
+from discord import app_commands, ButtonStyle
+from discord.ui import View, Button
 import meshtastic
 import meshtastic.serial_interface
 import pytz
-from discord import ButtonStyle, app_commands
-from discord.ui import Button, View
 from pubsub import pub
 
 def load_config():
     try:
         with open("config.json", "r") as config_file:
-            return json.load(config_file)
+            config = json.load(config_file)
+            config["channel_names"] = {int(k): v for k, v in config["channel_names"].items()}
+            return config
     except FileNotFoundError:
         logging.critical("The config.json file was not found.")
         raise
@@ -29,27 +31,17 @@ def load_config():
 
 config = load_config()
 
-color = 0x67ea94 # Meshtastic Green
+color = 0x67ea94  # Meshtastic Green
 
 token = config["discord_bot_token"]
 channel_id = int(config["discord_channel_id"])
-
-channel_names = {
-    0: "CHANNEL0",
-    1: "CHANNEL1",
-    2: "CHANNEL2",
-    3: "CHANNEL3",
-    4: "CHANNEL4",
-    5: "CHANNEL5",
-    6: "CHANNEL6",
-    7: "CHANNEL7",
-}
+channel_names = config["channel_names"]
 
 meshtodiscord = queue.Queue()
 discordtomesh = queue.Queue()
 nodelistq = queue.Queue()
 
-def onConnectionMesh(interface, topic=pub.AUTO_TOPIC): # Called when reconnecting to the Meshtastic radio
+def onConnectionMesh(interface, topic=pub.AUTO_TOPIC):
     print(interface.myInfo)
 
 def get_long_name(node_id, nodes):
@@ -57,22 +49,22 @@ def get_long_name(node_id, nodes):
         return nodes[node_id]['user'].get('longName', 'Unknown')
     return 'Unknown'
 
-def onReceiveMesh(packet, interface): # Called when a packet arrives from mesh
-    try: 
+def onReceiveMesh(packet, interface):  # Called when a packet arrives from mesh.
+    try:
         if packet['decoded']['portnum'] == 'TEXT_MESSAGE_APP':
-            print("Text message packet received")  # For debugging
-            print(f"Packet: {packet}")  # Print the entire packet for debugging
+            print("Text message packet received") # For debugging.
+            print(f"Packet: {packet}") # Print the entire packet for debugging.
 
-            # Check if 'channel' is present in the top-level packet
+            # Check if 'channel' is present in the top-level packet.
             if 'channel' in packet:
                 channel_index = packet['channel']
             else:
-                # Check if 'channel' is present in the decoded packet
+                # Check if 'channel' is present in the decoded packet.
                 if 'channel' in packet['decoded']:
                     channel_index = packet['decoded']['channel']
                 else:
-                    channel_index = 0  # Default to channel 0 if not present
-                    print("Channel not found in packet, defaulting to channel 0")  # For debugging
+                    channel_index = 0  # Default to channel 0 if not present.
+                    print("Channel not found in packet, defaulting to channel 0") # For debugging.
 
             channel_name = channel_names.get(channel_index, f"Unknown Channel ({channel_index})")
 
@@ -93,19 +85,19 @@ def onReceiveMesh(packet, interface): # Called when a packet arrives from mesh
 
             meshtodiscord.put(embed)
 
-    except KeyError as e: # Catch empty packet
+    except KeyError as e:  # Catch empty packet.
         pass
-    except Exception as e:  # Catch any other exceptions
-        print(f"Unexpected error: {e}")  # For debugging
+    except Exception as e:  # Catch any other exceptions.
+        print(f"Unexpected error: {e}") # For debugging.
         pass
 
 class MeshBot(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.tree = app_commands.CommandTree(self)
-        self.iface = None  # Initialize iface as None
+        self.iface = None  # Initialize iface as None.
 
-    async def setup_hook(self) -> None: # Create the background task and run it in the background
+    async def setup_hook(self) -> None:  # Create the background task and run it in the background.
         self.bg_task = self.loop.create_task(self.background_task())
         await self.tree.sync()
 
@@ -126,7 +118,7 @@ class MeshBot(discord.Client):
             sys.exit(1)
         while not self.is_closed():
             counter += 1
-            if (counter % 12 == 1): # Approx 1 minute (every 12th call, call every 5 seconds), refresh node list
+            if (counter % 12 == 1):  # Approximately 1 minute (every 12th call, call every 5 seconds) to refresh the node list.
                 nodelist = ["**Nodes seen in the last 15 minutes:**\n"]
                 nodes = self.iface.nodes
                 for node in nodes:
@@ -143,11 +135,11 @@ class MeshBot(discord.Client):
                             snr = "?"
                         if "lastHeard" in nodes[node]:
                             ts = int(nodes[node]['lastHeard'])
-                            time_zone = pytz.timezone('YOUR-TZ')
-                            current_time = datetime.fromtimestamp(ts, tz=pytz.utc).astimezone(time_zone)
-                            timestr = current_time.strftime('%d %B %Y %I:%M:%S %p')
+                            central_tz = pytz.timezone('US/Central')
+                            central_time = datetime.fromtimestamp(ts, tz=pytz.utc).astimezone(central_tz)
+                            timestr = central_time.strftime('%d %B %Y %I:%M:%S %p')
                         else:
-                            # 15 minute time for active nodes
+                            # 15 minute timer for active nodes.
                             ts = time.time() - (16 * 60)
                             timestr = "Unknown"
                         if ts > time.time() - (15 * 60):
@@ -156,8 +148,8 @@ class MeshBot(discord.Client):
                         print(e)
                         pass
 
-                # Split nodelist into chunks of 10 rows
-                nodelist_chunks = ["".join(nodelist[i:i+10]) for i in range(0, len(nodelist), 10)]
+                # Split node list into chunks of 10 rows.
+                nodelist_chunks = ["".join(nodelist[i:i + 10]) for i in range(0, len(nodelist), 10)]
 
             try:
                 meshmessage = meshtodiscord.get_nowait()
@@ -184,7 +176,7 @@ class MeshBot(discord.Client):
                 pass
             try:
                 nodelistq.get_nowait()
-                # If there are any item on this queue it sends the nodelist
+                # Sends node list if there are any.
                 for chunk in nodelist_chunks:
                     await channel.send(chunk)
                 nodelistq.task_done()
@@ -193,7 +185,6 @@ class MeshBot(discord.Client):
             await asyncio.sleep(5)
 
 class HelpView(View):
-
     def __init__(self):
         super().__init__(timeout=None)
 
@@ -209,18 +200,8 @@ async def help_command(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=False)
 
     help_text = ("**Command List**\n"
-         "`/sendid` - Send a message to another node.\n"
-         "`/sendnum` - Send a message to another node.\n"
-         "`/active` - Shows all active nodes.\n"
-         "`/channelname0` to send a message in channel 0.\n"
-         "`/channelname1` to send a message in channel 1.\n"
-         "`/channelname2` to send a message in channel 2.\n"
-         "`/channelname3` to send a message in channel 3.\n"
-         "`/channelname4` to send a message in channel 4.\n"
-         "`/channelname5` to send a message in channel 5.\n"
-         "`/channelname6` to send a message in channel 6.\n"
-         "`/channelname7` to send a message in channel 7.\n"
-         "`/help` - Shows this help message.\n\n")
+                 "`/active` - Shows all active nodes.\n"
+                 "`/help` - Shows this help message.\n\n")
 
     color = 0x67ea94
 
@@ -255,7 +236,6 @@ async def sendid(interaction: discord.Interaction, nodeid: str, message: str):
 
 @client.tree.command(name="sendnum", description="Send a message to a specific node.")
 async def sendnum(interaction: discord.Interaction, nodenum: int, message: str):
-
     current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
 
     embed = discord.Embed(title="Sending Message", description=message, color=0x67ea94)
@@ -264,92 +244,22 @@ async def sendnum(interaction: discord.Interaction, nodenum: int, message: str):
     await interaction.response.send_message(embed=embed)
     discordtomesh.put(f"nodenum={nodenum} {message}")
 
-@client.tree.command(name="CHANNEL-NAME-0", description="Send a message in CHANNEL-NAME-0.")
-async def channelname0(interaction: discord.Interaction, message: str):
-
-    current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
-
-    embed = discord.Embed(title="Sending Message to CHANNEL-NAME-0:", description=message, color=0x67ea94)
-    embed.set_footer(text=f"{current_time}")
-    await interaction.response.send_message(embed=embed)
-    discordtomesh.put(f"channel=0 {message}")
-
-@client.tree.command(name="CHANNEL-NAME-1", description="Send a message in CHANNEL-NAME-1.")
-async def channelname1(interaction: discord.Interaction, message: str):
-
-    current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
-
-    embed = discord.Embed(title="Sending Message to CHANNEL-NAME-1:", description=message, color=0x67ea94)
-    embed.set_footer(text=f"{current_time}")
-    await interaction.response.send_message(embed=embed)
-    discordtomesh.put(f"channel=1 {message}")
-
-@client.tree.command(name="CHANNEL-NAME-2", description="Send a message in CHANNEL-NAME-2.")
-async def channelname2(interaction: discord.Interaction, message: str):
-
-    current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
-
-    embed = discord.Embed(title="Sending Message to CHANNEL-NAME-2:", description=message, color=0x67ea94)
-    embed.set_footer(text=f"{current_time}")
-    await interaction.response.send_message(embed=embed)
-    discordtomesh.put(f"channel=2 {message}")
-
-@client.tree.command(name="CHANNEL-NAME-3", description="Send a message in CHANNEL-NAME-3.")
-async def channelname3(interaction: discord.Interaction, message: str):
-
-    current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
-
-    embed = discord.Embed(title="Sending Message to CHANNEL-NAME-3:", description=message, color=0x67ea94)
-    embed.set_footer(text=f"{current_time}")
-    await interaction.response.send_message(embed=embed)
-    discordtomesh.put(f"channel=3 {message}")
-
-@client.tree.command(name="CHANNEL-NAME-4", description="Send a message in CHANNEL-NAME-4.")
-async def channelname4(interaction: discord.Interaction, message: str):
-
-    current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
-
-    embed = discord.Embed(title="Sending Message to CHANNEL-NAME-4:", description=message, color=0x67ea94)
-    embed.set_footer(text=f"{current_time}")
-    await interaction.response.send_message(embed=embed)
-    discordtomesh.put(f"channel=4 {message}")
-
-@client.tree.command(name="CHANNEL-NAME-5", description="Send a message in CHANNEL-NAME-5.")
-async def channelname5(interaction: discord.Interaction, message: str):
-
-    current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
-
-    embed = discord.Embed(title="Sending Message to CHANNEL-NAME-5:", description=message, color=0x67ea94)
-    embed.set_footer(text=f"{current_time}")
-    await interaction.response.send_message(embed=embed)
-    discordtomesh.put(f"channel=5 {message}")
-
-@client.tree.command(name="CHANNEL-NAME-6", description="Send a message in CHANNEL-NAME-6.")
-async def channelname6(interaction: discord.Interaction, message: str):
-
-    current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
-
-    embed = discord.Embed(title="Sending Message to CHANNEL-NAME-6:", description=message, color=0x67ea94)
-    embed.set_footer(text=f"{current_time}")
-    await interaction.response.send_message(embed=embed)
-    discordtomesh.put(f"channel=6 {message}")
-
-@client.tree.command(name="CHANNEL-NAME-7", description="Send a message in CHANNEL-NAME-7.")
-async def channelname7(interaction: discord.Interaction, message: str):
-
-    current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
-
-    embed = discord.Embed(title="Sending Message to CHANNEL-NAME-7:", description=message, color=0x67ea94)
-    embed.set_footer(text=f"{current_time}")
-    await interaction.response.send_message(embed=embed)
-    discordtomesh.put(f"channel=7 {message}")
+# Dynamically create commands based on channel_names
+for channel_index, channel_name in channel_names.items():
+    @client.tree.command(name=channel_name.lower(), description=f"Send a message in the {channel_name} channel.")
+    async def send_channel_message(interaction: discord.Interaction, message: str, channel_index: int = channel_index):
+        current_time = datetime.now().strftime('%d %B %Y %I:%M:%S %p')
+        embed = discord.Embed(title=f"Sending Message to {channel_names[channel_index]}:", description=message, color=0x67ea94)
+        embed.set_footer(text=f"{current_time}")
+        await interaction.response.send_message(embed=embed)
+        discordtomesh.put(f"channel={channel_index} {message}")
 
 @client.tree.command(name="active", description="Lists all active nodes.")
 async def active(interaction: discord.Interaction):
     await interaction.response.defer()
 
     nodelistq.put(True)
-    
+
     await asyncio.sleep(1)
 
     await interaction.delete_original_response()
