@@ -204,15 +204,12 @@ async def help_command(interaction: discord.Interaction):
     help_text = ("**Command List**\n"
                  "`/sendid` - Send a message to another node.\n"
                  "`/sendnum` - Send a message to another node.\n"
-                 "`/active` - Shows all active nodes.\n")
+                 "`/active` - Shows all active nodes.\n"
+                 "`/help` - Shows this help message.\n")
 
     # Dynamically add channel commands based on channel_names
     for channel_index, channel_name in channel_names.items():
         help_text += f"`/{channel_name.lower()}` - Send a message in the {channel_name} channel.\n"
-
-    # Add the rest of the help text
-    help_text += ("`/active` - Shows all active nodes.\n"
-                  "`/help` - Shows this help message.\n\n")
 
     color = 0x67ea94
 
