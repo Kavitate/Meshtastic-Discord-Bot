@@ -1,7 +1,7 @@
 <h1 align="center">:pager::satellite: Meshtastic Discord Bot :satellite::pager:</h1>
 
 <p align="center">
-  <img src="https://i.imgur.com/V9HLS0E.jpeg">
+  <img src="https://i.imgur.com/oFp9Hk0.jpeg">
 </p>
 
 ## Purpose
