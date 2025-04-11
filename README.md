@@ -30,6 +30,10 @@ It also allows the user to communicate on their local network no matter where th
 The following must be established in order for the bot to operate successfully:
 - A Meshtastic compatable device must be connected via a serial connection to the device operating the bot.
   - A list of Meshtastic compatable devices can be found [here](https://meshtastic.org/docs/hardware/devices/).
+  - Users with multiple mesh devices connected to the host will need to define the port they want the bot to utilize.
+This can be done by changing line 116:
+    - From: `self.iface = meshtastic.serial_interface.SerialInterface()`
+    - To: `self.iface = meshtastic.serial_interface.SerialInterface(devPath="/dev/YOUR_PORT")`
 - Update the variables outlined in the next section.
 
 ## Variables
